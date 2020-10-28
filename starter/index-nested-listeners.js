@@ -1,27 +1,10 @@
 /********** DOM Elements **********/ 
 const toggleSwitch = document.querySelector("#toggle-dark-mode")
 const animalForm = document.querySelector("#animal-form")
-const animalList = document.querySelector("#animal-list")
 
 /********** Event Listeners **********/
 toggleSwitch.addEventListener("click", handleToggleDarkMode)
 animalForm.addEventListener("submit", handleAnimalFormSubmit)
-
-animalList.addEventListener("click", function(event) {
-
-  if (event.target.matches(".delete-button")) {
-    const button = event.target
-    const card = button.closest(".card")
-    card.remove()
-    
-  } else if (event.target.dataset.action === "donate") {
-    const button = event.target
-    const card = button.closest(".card")
-    const donationCountSpan = card.querySelector(".donation-count")
-    const donationCount = parseInt(donationCountSpan.textContent)
-    donationCountSpan.textContent = donationCount + 10
-  }
-})
 
 /********** Event Handlers **********/ 
 function handleToggleDarkMode() {
@@ -77,6 +60,20 @@ function renderOneAnimal(animalObj) {
 
   // step 3. slap it on the DOM!
   document.querySelector("#animal-list").append(card)
+
+  //nested event listener strategy
+  const deleteButton = card.querySelector(".delete-button")
+  deleteButton.addEventListener("click", function () {
+    //has access to outer scope, so we can use vars from renderOneAnimal fn
+    card.remove()
+  })
+
+  const donateButton = card.querySelector(".donate-button")
+  donateButton.addEventListener("click", function() {
+    const donationCountSpan = card.querySelector(".donation-count")
+    animalObj.donations += 10
+    donationCountSpan.textContent = animalObj.donations
+  })
 }
 
 function renderAllAnimals(animalData) {
